@@ -5,26 +5,51 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>Intellij-beginner-linter</name>
+    <name>IntelliJBeginnerLinter</name>
+
+    <version>1.0-SNAPSHOT</version>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="support@yourcompany.com" url="https://www.yourcompany.com">YourCompany</vendor>
+    <vendor email="s2023501@ed.ac.uk" url="https://www.ed.ac.uk">The University of Edinburgh</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
-    <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
-  ]]></description>
+    <description>
+        <![CDATA[
+        <p>Welcome to IntelliJ Beginner Linter, the plugin designed with the beginner's background in mind! This plugin
+        simplifies the coding experience by removing IntelliJ IDE overwhelming warnings with ones targeted at
+        beginners, making it easier for those who are just starting out with programming.</p>
+        <p><strong>Features include:</strong></p>
+        <ul>
+            <li>Clear explanations of common programming errors and mistakes.</li>
+        </ul>
+        <p>Intellij Beginner Linter helps you focus on learning the fundamentals of Java without getting overwhelmed
+        by the complexity of the IntelliJ IDE.</p>
+        <p>This plugin is the brainchild of an aspiring developer and represents the culminating informatics honors
+        project for a B.Eng. degree in Electronics and Computer Science at the University of Edinburgh.</p>
+        <p>Start your coding journey with confidence and support – try IntelliJ Beginner Linter today!</p>
+        ]]>
+    </description>
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
-    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
+        <localInspection language="JAVA"
+                         displayName="Method length inspection"
+                         shortName="MethodLengthInspection"
+                         groupPath="Beginner-friendly inspections"
+                         groupName="Custom inspections"
+                         enabledByDefault="true"
+                         level="WARNING"
+                         implementationClass="uk.ac.ed.inf.intellijbeginnerlinter.custominspects.MethodLengthInspection"
+        />
 
+        <projectConfigurable displayName="Panel"
+                             instance="uk.ac.ed.inf.intellijbeginnerlinter.TogglePanel"/>
     </extensions>
 </idea-plugin>

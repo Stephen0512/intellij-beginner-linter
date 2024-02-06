@@ -11,13 +11,18 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    // Include Kotlin standard library with JDK 8 support
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+}
+
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
     version.set("2023.1.5")
     type.set("IC") // Target IDE Platform
 
-    plugins.set(listOf(/* Plugin Dependencies */))
+    plugins.set(listOf("com.intellij.java")) // Define dependencies on other plugins (Developer changed).
 }
 
 tasks {
