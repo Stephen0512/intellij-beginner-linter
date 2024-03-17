@@ -1,4 +1,4 @@
-package uk.ac.ed.inf.intellijbeginnerlinter.custominspects
+package uk.ac.ed.inf.intellijbeginnerlinter
 
 import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull
  * A customized inspection that checks if the length of a function exceeds a specified limit.
  * The inspection can be configured to apply this inspection to all functions or only to specified functions.
  * Ihe specified length limit of functions can also be configured by the users.
+ *
+ * @author Zhuohang (Stephen) Shen <s2023501@ed.ac.uk>
  */
 class MethodLengthInspection : AbstractBaseJavaLocalInspectionTool() {
 
@@ -72,7 +74,7 @@ class MethodLengthInspection : AbstractBaseJavaLocalInspectionTool() {
                     // Register a problem in the problem holder if the method exceeds the specified limit.
                     holder.registerProblem(
                         method.nameIdentifier ?: method,
-                        "Method '${method.name}' is too long (current: ${methodLength}, limit: $maxLength)",
+                        "Method '${method.name}' is too long (current: ${methodLength}, limit: $maxLength).",
                         ProblemHighlightType.WARNING
                     )
                 }
