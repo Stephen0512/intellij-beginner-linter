@@ -9,6 +9,7 @@ import com.intellij.psi.PsiIfStatement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.annotations.NotNull
+import java.util.regex.PatternSyntaxException
 
 
 /**
@@ -45,7 +46,7 @@ class IfStatementUsageInspection : AbstractBaseJavaLocalInspectionTool() {
             private fun specsParser(): MutableMap<String, Int> {
 
                 // If no spec is provided, no if statement is allowed.
-                if (specs.isEmpty()){
+                if (specs.isEmpty()) {
                     return mutableMapOf<String, Int>()  // Return the map directly.
                 }
 
@@ -106,8 +107,34 @@ class IfStatementUsageInspection : AbstractBaseJavaLocalInspectionTool() {
                 val count = methodIfStatementCounts.getOrDefault(method, 0) + 1  // 0 as the initial values.
                 methodIfStatementCounts[method] = count
 
+                // Declare a variable for the longest name string given by the user matches the current function.
+                var targetSpecName : String = ""
+
+                // Check through every function string in regex expression given by the user.
+                for (specName in specsMap.keys) {
+
+                    // Convert the string given by the user to regex expression and null for exceptions.
+                    var regex: Regex? = null
+                    try {
+                        regex = Regex(specName)
+                    } catch (e: PatternSyntaxException) {
+                        e.printStackTrace()  // When exceptions, no regex expression would be matched.
+                    }
+
+                    // If the conversion is success, matches the function name with the regex expression.
+                    if (regex != null) {
+                        if (regex.matches(method.name)) {
+
+                            // If the function name matches, compares the length of the expression with the stored one.
+                            if (specName.length > targetSpecName.length) {
+                                targetSpecName = specName  // Update the stored one.
+                            }
+                        }
+                    }
+                }
+
                 // Find the number of if statements allowed in the method.
-                val allowance = specsMap.getOrDefault(method.name, 0)  // 0 as the default values.
+                val allowance = specsMap.getOrDefault(targetSpecName, 0)  // 0 as the default values.
 
                 // When the count is larger than the allowance and the allowance is not infinite.
                 if (count > allowance && allowance != -1) {
