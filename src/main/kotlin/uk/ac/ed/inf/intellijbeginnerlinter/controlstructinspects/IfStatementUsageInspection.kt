@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull
 /**
  * A customized inspection that checks if or how many of the "if statement" is used in the function.
  * The inspection can be configured to apply this inspection to all functions or only to specified functions.
- * Ihe number of "if statement" used in each function can also be specified by the user.
+ * Ihe number of "if statement" allowed in each function can also be specified by the user.
  *
  * @author Zhuohang (Stephen) Shen <s2023501@ed.ac.uk>
  */
