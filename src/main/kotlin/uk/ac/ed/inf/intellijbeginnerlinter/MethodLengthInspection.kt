@@ -6,7 +6,6 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiMethod
-import java.util.regex.PatternSyntaxException
 import org.jetbrains.annotations.NotNull
 
 
@@ -19,9 +18,8 @@ import org.jetbrains.annotations.NotNull
  */
 class MethodLengthInspection : AbstractBaseJavaLocalInspectionTool() {
 
-    // Declare the variables for the length limit and the functions to be checked.
+    // Declare the variables for the length limit.
     var maxLength: Int = 10
-    var methodNames: String = ""  // Empty means checking all the functions.
 
     /**
      * Override the buildVisitor function to build a Java element visitor that provides
@@ -41,35 +39,12 @@ class MethodLengthInspection : AbstractBaseJavaLocalInspectionTool() {
                 // Call the visitMethod function from the super class to maintain the original behavior of it.
                 super.visitMethod(method)
 
-                // Get the function body and calculate the function length
+                // Calculate the function length
                 val methodBody = method.body
                 val methodLength: Int = countLines(method.text)
 
-                // Declare the new variable indicating if the function name matches the ones specified by the user.
-                var isNameMatch = false
-
-                // The function name matches if no string is given by the user.
-                if (methodNames.isEmpty()) {
-                    isNameMatch = true
-                } else {
-
-                    // Convert the string given by the user to regex expression and null for exceptions.
-                    var regex: Regex? = null
-                    try {
-                        regex = Regex(methodNames)
-                    } catch (e: PatternSyntaxException) {
-                        e.printStackTrace()  // When exceptions, no function would be matched.
-                    }
-
-                    // If the conversion is success, matches the function name with the regex expression.
-                    if (regex != null) {
-                        isNameMatch = regex.matches(method.name)
-                    }
-                }
-
                 // Check if the function body is not null and exceeds the specified limit.
-                // Also check if the function name matches the ones provided by the user (if specified).
-                if (methodBody != null && methodLength > maxLength && isNameMatch) {
+                if (methodBody != null && methodLength > maxLength) {
 
                     // Register a problem in the problem holder if the method exceeds the specified limit.
                     holder.registerProblem(
