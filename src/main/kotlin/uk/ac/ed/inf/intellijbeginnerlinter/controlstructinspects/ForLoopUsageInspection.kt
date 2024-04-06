@@ -46,7 +46,7 @@ class ForLoopUsageInspection : AbstractBaseJavaLocalInspectionTool() {
 
                 // If no spec is provided, no if statement is allowed.
                 if (specs.isEmpty()) {
-                    return mutableMapOf<String, Int>()  // Return the map directly.
+                    return mutableMapOf<String, Int>()  // Return an empty map directly.
                 }
 
                 // Split the specs string to elements by ","
@@ -66,7 +66,7 @@ class ForLoopUsageInspection : AbstractBaseJavaLocalInspectionTool() {
                         // Check if the size of the pair is two and parse the pair to the map.
                         if (parts.size == 2) {
                             val (key, value) = parts
-                            results[key] = value.toInt()  // Exception is handled below.
+                            results[key] = value.toInt()  // Exception for non-integer values is handled below.
                         }
 
                         // Check if the size of the pair is one and parse the pair to the map with infinite allowance.
@@ -107,7 +107,7 @@ class ForLoopUsageInspection : AbstractBaseJavaLocalInspectionTool() {
                 methodForLoopCounts[method] = count
 
                 // Declare a variable for the longest name string given by the user matches the current function.
-                var targetSpecName : String = ""
+                var targetSpecName: String = ""
 
                 // Check through every function string in regex expression given by the user.
                 for (specName in specsMap.keys) {
@@ -137,11 +137,21 @@ class ForLoopUsageInspection : AbstractBaseJavaLocalInspectionTool() {
 
                 // When the count is larger than the allowance and the allowance is not infinite.
                 if (count > allowance && allowance != -1) {
-                    holder.registerProblem(
-                        statement,
-                        "Avoid using 'for' loops within Java methods '${method.name}'.",
-                        ProblemHighlightType.WARNING
-                    )
+
+                    // When the allowance is zero (for correct messages).
+                    if (allowance == 0) {
+                        holder.registerProblem(
+                            statement,
+                            "Avoid using 'for' loops within Java methods '${method.name}'.",
+                            ProblemHighlightType.WARNING
+                        )
+                    } else {  // Otherwise
+                        holder.registerProblem(
+                            statement,
+                            "Too many 'for' loops within Java methods '${method.name}' (Allowed: ${allowance}; Used: ${count}).",
+                            ProblemHighlightType.WARNING
+                        )
+                    }
                 }
             }
         }

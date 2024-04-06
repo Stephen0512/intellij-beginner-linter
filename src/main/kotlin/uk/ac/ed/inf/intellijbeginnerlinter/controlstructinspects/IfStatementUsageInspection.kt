@@ -30,7 +30,7 @@ class IfStatementUsageInspection : AbstractBaseJavaLocalInspectionTool() {
      *
      * @param holder The container where the new Java element visitor will register problems it found.
      * @param isOnTheFly Boolean value indicates if the inspection is running in 'on-the-fly' mode.
-     * @return A JavaElementVisitor that will inspect the usage of if statement in Java functions.
+     * @return A JavaElementVisitor that will inspect the usage of if statements in Java functions.
      */
     @NotNull
     override fun buildVisitor(@NotNull holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -47,7 +47,7 @@ class IfStatementUsageInspection : AbstractBaseJavaLocalInspectionTool() {
 
                 // If no spec is provided, no if statement is allowed.
                 if (specs.isEmpty()) {
-                    return mutableMapOf<String, Int>()  // Return the map directly.
+                    return mutableMapOf<String, Int>()  // Return an empty map directly.
                 }
 
                 // Split the specs string to elements by ","
@@ -67,7 +67,7 @@ class IfStatementUsageInspection : AbstractBaseJavaLocalInspectionTool() {
                         // Check if the size of the pair is two and parse the pair to the map.
                         if (parts.size == 2) {
                             val (key, value) = parts
-                            results[key] = value.toInt()  // Exception is handled below.
+                            results[key] = value.toInt()  // Exception for non-integer values is handled below.
                         }
 
                         // Check if the size of the pair is one and parse the pair to the map with infinite allowance.
@@ -138,11 +138,21 @@ class IfStatementUsageInspection : AbstractBaseJavaLocalInspectionTool() {
 
                 // When the count is larger than the allowance and the allowance is not infinite.
                 if (count > allowance && allowance != -1) {
-                    holder.registerProblem(
-                        statement,
-                        "Avoid using 'if' statements within Java methods '${method.name}'.",
-                        ProblemHighlightType.WARNING
-                    )
+
+                    // When the allowance is zero (for correct messages).
+                    if (allowance == 0) {
+                        holder.registerProblem(
+                            statement,
+                            "Avoid using 'if' statements within Java methods '${method.name}'.",
+                            ProblemHighlightType.WARNING
+                        )
+                    } else {  // Otherwise
+                        holder.registerProblem(
+                            statement,
+                            "Too many 'if' statements within Java methods '${method.name}' (Allowed: ${allowance}; Used: ${count}).",
+                            ProblemHighlightType.WARNING
+                        )
+                    }
                 }
             }
         }

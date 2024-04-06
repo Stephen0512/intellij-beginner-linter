@@ -49,7 +49,7 @@ class MethodLengthInspection : AbstractBaseJavaLocalInspectionTool() {
                     // Register a problem in the problem holder if the method exceeds the specified limit.
                     holder.registerProblem(
                         method.nameIdentifier ?: method,
-                        "Method '${method.name}' is too long (current: ${methodLength}, limit: $maxLength).",
+                        "Method '${method.name}' is too long (current: ${methodLength}; limit: $maxLength).",
                         ProblemHighlightType.WARNING
                     )
                 }
