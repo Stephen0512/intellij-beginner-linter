@@ -14,6 +14,8 @@ repositories {
 dependencies {
     // Include Kotlin standard library with JDK 8 support
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    // Include Google Gson library for json object parsing
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 // Configure Gradle IntelliJ Plugin

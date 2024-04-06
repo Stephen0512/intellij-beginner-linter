@@ -27,14 +27,14 @@ class ControlPanel(private val project: Project) : Configurable {
     // Declare a empty setting panel for all UI components.
     private val panel: JPanel
 
-    // Declare UI components for the importation of the input settings file.
+    // Declare a UI button component for the importation of the input settings file.
     private val importSettingsButton = JButton("Import Settings")
 
-    // Declare UI components for the Customised Method Length Inspection.
+    // Declare two UI components for the Customised Method Length Inspection.
     private val enableMethodLengthInspectionCheckBox = JCheckBox("Enable Inspection")
     private val maxLengthTextField = JTextField()
 
-    // Declare UI components for the Customised Control Structure Inspections.
+    // Declare six UI components for the Customised Control Structure Inspections.
     private val enableControlStructInspectionsCheckBox = JCheckBox("Enable Inspections")
     private val ifStatementUsageTextField = JTextField()
     private val switchStatementUsageTextField = JTextField()
@@ -42,18 +42,24 @@ class ControlPanel(private val project: Project) : Configurable {
     private val forLoopUsageTextField = JTextField()
     private val foreachLoopUsageTextField = JTextField()
 
-    // Declare UI components for the Declaration Issue Inspections.
+    // Declare two UI components for the Declaration Issue Inspections.
     private val enableUnusedInspectionCheckBox = JCheckBox("Enable Unused Declaration Inspection")
-    private val enableCanBeFinalInspectionCheckBox = JCheckBox("Enable Declaration can have ‘Final’ Modifier Inspection")
+    private val enableCanBeFinalInspectionCheckBox =
+        JCheckBox("Enable Declaration can have ‘Final’ Modifier Inspection")
 
-    // Declare UI components for the Java Language Level Issue Inspections.
-    private val enableSequencedCollectionMethodCanBeUsedInspectionCheckBox = JCheckBox("Enable SequencedCollection Method can be Used Inspection")
-    private val enableForCanBeForeachInspectionCheckBox = JCheckBox("Enable ‘For’ Loop can be Replaced with Enhanced For Loop Inspection")
-    private val enableConvert2DiamondInspectionCheckBox = JCheckBox("Enable Explicit Type can be Replaced with ‘<>’ Inspection:")
+    // Declare four UI components for the Java Language Level Issue Inspections.
+    private val enableSequencedCollectionMethodCanBeUsedInspectionCheckBox =
+        JCheckBox("Enable SequencedCollection Method can be Used Inspection")
+    private val enableForCanBeForeachInspectionCheckBox =
+        JCheckBox("Enable ‘For’ Loop can be Replaced with Enhanced For Loop Inspection")
+    private val enableConvert2DiamondInspectionCheckBox =
+        JCheckBox("Enable Explicit Type can be Replaced with ‘<>’ Inspection:")
     private val enableManualArrayCopyInspectionCheckBox = JCheckBox("Enable Manual Array Copy Inspection")
 
     /**
-     * Initialization function used to create the panel and create listeners to different UI components.
+     * Initialization function used to create the control panel and create listeners to different UI components.
+     * The control panel will be updated using the current settings stored in the inspection profile.
+     * Default values will be entered if no settings have been set before.
      */
     init {
         // Retrieves the existing inspection profile for the current project.
@@ -61,29 +67,29 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // --------------------------- Custom Method Length Inspection ---------------------------
 
-        // Create a title label for the MethodLengthInspection
+        // Create a title label for the Method Length Inspection.
         val methodLengthInspectionTitleLabel = JLabel("Method Length Inspection Settings")
 
-        // Change the font of the title label to bold and increase font size
+        // Change the font of the title label to bold and increase font size.
         val methodLengthTitleFont = methodLengthInspectionTitleLabel.font.deriveFont(
             Font.BOLD,
             methodLengthInspectionTitleLabel.font.size * 1.2f
         )
         methodLengthInspectionTitleLabel.font = methodLengthTitleFont
 
-        // Get the MethodLengthInspection inspection wrapper from the inspection profile.
+        // Get the Method Length Inspection wrapper from the inspection profile.
         val methodLengthInspectionTool = inspectionProfile.getInspectionTool("MethodLengthInspection", project)
 
-        // Get the MethodLengthInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not MethodLengthInspection.
+        // Get the Method Length Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val methodLengthInspection = methodLengthInspectionTool?.tool as? MethodLengthInspection
 
-        // Set the UI components to the stored states of the MethodLengthInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableMethodLengthInspectionCheckBox.isSelected =
             methodLengthInspectionTool != null && inspectionProfile.isToolEnabled(methodLengthInspectionTool.displayKey)
         maxLengthTextField.text = methodLengthInspection?.maxLength?.toString() ?: "10"
 
-        // Add a change listener to enable or disable the MethodLengthInspection inspection based on user interaction.
+        // Add a change listener to the enabled status of the Method Length Inspection based on user interactions.
         enableMethodLengthInspectionCheckBox.addChangeListener {
             val newState = enableMethodLengthInspectionCheckBox.isSelected  // Read the new state.
 
@@ -96,11 +102,12 @@ class ControlPanel(private val project: Project) : Configurable {
             }
         }
 
-        // --------------------------- Custom control structure Inspections ---------------------------
+        // --------------------------- Custom Control Structure Inspections ---------------------------
 
-        // Create a title label for the inspections of control structures
+        // Create a title label for the Control Structure Inspections.
         val controlStructInspectionsTitleLabel = JLabel("Control Structure Inspections Settings")
 
+        // Create the notes for the text fields used in this inspection.
         val spaces = "&nbsp;".repeat(11)
         val notesLabelText = """
                 <html>
@@ -122,83 +129,82 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // -------------- If Statement Inspection -------------
 
-        // Get the ifStatementInspection inspection wrapper from the inspection profile.
+        // Get the If Statement Inspection wrapper from the inspection profile.
         val ifStatementInspectionTool = inspectionProfile.getInspectionTool("IfStatementUsageInspection", project)
 
-        // Get the ifStatementInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not ifStatementInspection.
+        // Get the If Statement Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val ifStatementInspection = ifStatementInspectionTool?.tool as? IfStatementUsageInspection
 
-        // Set the UI components to the stored states of the ifStatementInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         val ifStatementState =
             ifStatementInspectionTool != null && inspectionProfile.isToolEnabled(ifStatementInspectionTool.displayKey)
         ifStatementUsageTextField.text = ifStatementInspection?.specs ?: ""
 
         // -------------- Switch Statement Inspection -------------
 
-        // Get the switchStatementInspection inspection wrapper from the inspection profile.
+        // Get the Switch Statement Inspection wrapper from the inspection profile.
         val switchStatementInspectionTool =
             inspectionProfile.getInspectionTool("SwitchStatementUsageInspection", project)
 
-        // Get the switchStatementInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not switchStatementInspection.
+        // Get the Switch Statement Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val switchStatementInspection = switchStatementInspectionTool?.tool as? SwitchStatementUsageInspection
 
-        // Set the UI components to the stored states of the switchStatementInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         val switchStatementState =
             switchStatementInspectionTool != null && inspectionProfile.isToolEnabled(switchStatementInspectionTool.displayKey)
         switchStatementUsageTextField.text = switchStatementInspection?.specs ?: ""
 
         // -------------- While Loop Inspection -------------
 
-        // Get the whileLoopInspection inspection wrapper from the inspection profile.
+        // Get the While Loop Inspection wrapper from the inspection profile.
         val whileLoopInspectionTool = inspectionProfile.getInspectionTool("WhileLoopUsageInspection", project)
 
-        // Get the whileLoopInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not whileLoopInspection.
+        // Get the While Loop Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val whileLoopInspection = whileLoopInspectionTool?.tool as? WhileLoopUsageInspection
 
-        // Set the UI components to the stored states of the whileLoopInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         val whileLoopState =
             whileLoopInspectionTool != null && inspectionProfile.isToolEnabled(whileLoopInspectionTool.displayKey)
         whileLoopUsageTextField.text = whileLoopInspection?.specs ?: ""
 
         // -------------- For Loop Inspection -------------
 
-        // Get the forLoopInspection inspection wrapper from the inspection profile.
+        // Get the For Loop Inspection wrapper from the inspection profile.
         val forLoopInspectionTool = inspectionProfile.getInspectionTool("ForLoopUsageInspection", project)
 
-        // Get the forLoopInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not forLoopInspection.
+        // Get the For Loop Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val forLoopInspection = forLoopInspectionTool?.tool as? ForLoopUsageInspection
 
-        // Set the UI components to the stored states of the forLoopInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         val forLoopState =
             forLoopInspectionTool != null && inspectionProfile.isToolEnabled(forLoopInspectionTool.displayKey)
         forLoopUsageTextField.text = forLoopInspection?.specs ?: ""
 
         // -------------- Enhanced For Loop Inspection -------------
 
-        // Get the forLoopInspection inspection wrapper from the inspection profile.
+        // Get the Enhanced For Loop Inspection wrapper from the inspection profile.
         val foreachLoopInspectionTool = inspectionProfile.getInspectionTool("ForeachLoopUsageInspection", project)
 
-        // Get the foreachLoopInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not foreachLoopInspection.
+        // Get the Enhanced For Loop Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val foreachLoopInspection = foreachLoopInspectionTool?.tool as? ForeachLoopUsageInspection
 
-        // Set the UI components to the stored states of the foreachLoopInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         val foreachLoopState =
             foreachLoopInspectionTool != null && inspectionProfile.isToolEnabled(foreachLoopInspectionTool.displayKey)
         foreachLoopUsageTextField.text = foreachLoopInspection?.specs ?: ""
 
         // -------------- Final Code for Control Structures  -------------
 
-        // Check all the control structure inspections have the same state.
+        // Check all the Control Structure Inspections have the same state.
         if (ifStatementState == switchStatementState == whileLoopState == forLoopState == foreachLoopState) {
             enableControlStructInspectionsCheckBox.isSelected = ifStatementState
         } else {
-
-            // Set all the control structure inspections to false
+            // Set all the Control Structure Inspections to false if the status are not consistent.
             enableControlStructInspectionsCheckBox.isSelected = false
             if (ifStatementInspectionTool != null) {
                 inspectionProfile.setToolEnabled(ifStatementInspectionTool.shortName, false)
@@ -216,17 +222,17 @@ class ControlPanel(private val project: Project) : Configurable {
                 inspectionProfile.setToolEnabled(foreachLoopInspectionTool.shortName, false)
             }
 
-            // Commit the changes to the inspection profile
+            // Commit the changes to the inspection profile.
             inspectionProfile.modifyProfile {
                 it.commit()
             }
         }
 
-        // Add change listeners to enable or disable the control structure inspections based on user interaction.
+        // Add a change listener to the enabled status of the Control Structure Inspections based on user interactions.
         enableControlStructInspectionsCheckBox.addChangeListener {
             val newState = enableControlStructInspectionsCheckBox.isSelected  // Read the new state.
 
-            // Commit the changes to the inspection profile if the ifStatementInspection exists.
+            // Commit the changes to the inspection profile if the ifStatementInspectionTool exists.
             if (ifStatementInspectionTool != null) {
                 inspectionProfile.setToolEnabled(ifStatementInspectionTool.shortName, newState)
             }
@@ -251,6 +257,7 @@ class ControlPanel(private val project: Project) : Configurable {
                 inspectionProfile.setToolEnabled(foreachLoopInspectionTool.shortName, newState)
             }
 
+            // Commit the changes to the inspection profile.
             inspectionProfile.modifyProfile {
                 it.commit()
             }
@@ -258,7 +265,7 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // --------------------------- Declaration Issue Inspection ---------------------------
 
-        // Create a title label for the Declaration Issue Inspections
+        // Create a title label for the Declaration Issue Inspections.
         val declarationIssueInspectionsTitleLabel = JLabel("Declaration Issue Inspections Settings")
 
         // Change the font of the title label to bold and increase font size
@@ -268,40 +275,40 @@ class ControlPanel(private val project: Project) : Configurable {
         )
         declarationIssueInspectionsTitleLabel.font = declarationIssueTitleFont
 
-        // Get the UnusedInspection inspection wrapper from the inspection profile.
-        val UnusedInspectionTool = inspectionProfile.getInspectionTool("unused", project)
+        // Get the Unused Inspection wrapper from the inspection profile.
+        val unusedInspectionTool = inspectionProfile.getInspectionTool("unused", project)
 
-        // Set the UI component to the stored states of the UnusedInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableUnusedInspectionCheckBox.isSelected =
-            UnusedInspectionTool != null && inspectionProfile.isToolEnabled(UnusedInspectionTool.displayKey)
+            unusedInspectionTool != null && inspectionProfile.isToolEnabled(unusedInspectionTool.displayKey)
 
-        // Add a change listener to enable or disable the UnusedInspection inspection based on user interaction.
+        // Add a change listener to enable or disable the Unused Inspection based on user interactions.
         enableUnusedInspectionCheckBox.addChangeListener {
             val newState = enableUnusedInspectionCheckBox.isSelected  // Read the new state.
 
             // Commit the changes to the inspection profile if the inspection exists.
-            if (UnusedInspectionTool != null) {
-                inspectionProfile.setToolEnabled(UnusedInspectionTool.shortName, newState)
+            if (unusedInspectionTool != null) {
+                inspectionProfile.setToolEnabled(unusedInspectionTool.shortName, newState)
                 inspectionProfile.modifyProfile {
                     it.commit()
                 }
             }
         }
 
-        // Get the CanBeFinalInspection inspection wrapper from the inspection profile.
-        val CanBeFinalInspectionTool = inspectionProfile.getInspectionTool("CanBeFinal", project)
+        // Get the Can Be Final Inspection wrapper from the inspection profile.
+        val canBeFinalInspectionTool = inspectionProfile.getInspectionTool("CanBeFinal", project)
 
-        // Set the UI component to the stored states of the CanBeFinalInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableCanBeFinalInspectionCheckBox.isSelected =
-            CanBeFinalInspectionTool != null && inspectionProfile.isToolEnabled(CanBeFinalInspectionTool.displayKey)
+            canBeFinalInspectionTool != null && inspectionProfile.isToolEnabled(canBeFinalInspectionTool.displayKey)
 
-        // Add a change listener to enable or disable the CanBeFinalInspection inspection based on user interaction.
+        // Add a change listener to enable or disable the Can Be Final Inspection based on user interactions.
         enableCanBeFinalInspectionCheckBox.addChangeListener {
             val newState = enableCanBeFinalInspectionCheckBox.isSelected  // Read the new state.
 
             // Commit the changes to the inspection profile if the inspection exists.
-            if (CanBeFinalInspectionTool != null) {
-                inspectionProfile.setToolEnabled(CanBeFinalInspectionTool.shortName, newState)
+            if (canBeFinalInspectionTool != null) {
+                inspectionProfile.setToolEnabled(canBeFinalInspectionTool.shortName, newState)
                 inspectionProfile.modifyProfile {
                     it.commit()
                 }
@@ -320,14 +327,17 @@ class ControlPanel(private val project: Project) : Configurable {
         )
         javaLanguageLevelInspectionsTitleLabel.font = javaLanguageLevelTitleFont
 
-        // Get the sequencedCollectionInspection inspection wrapper from the inspection profile.
-        val sequencedCollectionInspectionTool = inspectionProfile.getInspectionTool("SequencedCollectionMethodCanBeUsed", project)
+        // Get the sequenced Collection Inspection wrapper from the inspection profile.
+        val sequencedCollectionInspectionTool =
+            inspectionProfile.getInspectionTool("SequencedCollectionMethodCanBeUsed", project)
 
-        // Set the UI component to the stored states of the sequencedCollectionInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableSequencedCollectionMethodCanBeUsedInspectionCheckBox.isSelected =
-            sequencedCollectionInspectionTool != null && inspectionProfile.isToolEnabled(sequencedCollectionInspectionTool.displayKey)
+            sequencedCollectionInspectionTool != null && inspectionProfile.isToolEnabled(
+                sequencedCollectionInspectionTool.displayKey
+            )
 
-        // Add a change listener to enable or disable the sequencedCollectionInspection inspection based on user interaction.
+        // Add a change listener to enable or disable the sequenced Collection Inspection based on user interaction.
         enableSequencedCollectionMethodCanBeUsedInspectionCheckBox.addChangeListener {
             val newState = enableSequencedCollectionMethodCanBeUsedInspectionCheckBox.isSelected  // Read the new state.
 
@@ -340,14 +350,14 @@ class ControlPanel(private val project: Project) : Configurable {
             }
         }
 
-        // Get the ForCanBeForeach inspection wrapper from the inspection profile.
+        // Get the For Can Be Foreach Inspection wrapper from the inspection profile.
         val forCanBeForeachInspectionTool = inspectionProfile.getInspectionTool("ForCanBeForeach", project)
 
-        // Set the UI component to the stored states of the forCanBeForeachInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableForCanBeForeachInspectionCheckBox.isSelected =
             forCanBeForeachInspectionTool != null && inspectionProfile.isToolEnabled(forCanBeForeachInspectionTool.displayKey)
 
-        // Add a change listener to enable or disable the forCanBeForeachInspection inspection based on user interaction.
+        // Add a change listener to enable or disable the For Can Be Foreach Inspection based on user interactions.
         enableForCanBeForeachInspectionCheckBox.addChangeListener {
             val newState = enableForCanBeForeachInspectionCheckBox.isSelected  // Read the new state.
 
@@ -360,14 +370,14 @@ class ControlPanel(private val project: Project) : Configurable {
             }
         }
 
-        // Get the Convert2Diamond inspection wrapper from the inspection profile.
+        // Get the Convert 2Diamond Inspection wrapper from the inspection profile.
         val convert2DiamondInspectionTool = inspectionProfile.getInspectionTool("Convert2Diamond", project)
 
-        // Set the UI component to the stored states of the convert2DiamondInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableConvert2DiamondInspectionCheckBox.isSelected =
             convert2DiamondInspectionTool != null && inspectionProfile.isToolEnabled(convert2DiamondInspectionTool.displayKey)
 
-        // Add a change listener to enable or disable the convert2DiamondInspection inspection based on user interaction.
+        // Add a change listener to enable or disable the Convert 2Diamond Inspection based on user interactions.
         enableConvert2DiamondInspectionCheckBox.addChangeListener {
             val newState = enableConvert2DiamondInspectionCheckBox.isSelected  // Read the new state.
 
@@ -380,14 +390,14 @@ class ControlPanel(private val project: Project) : Configurable {
             }
         }
 
-        // Get the ManualArrayCopy inspection wrapper from the inspection profile.
+        // Get the Manual Array Copy Inspection wrapper from the inspection profile.
         val manualArrayCopyInspectionTool = inspectionProfile.getInspectionTool("ManualArrayCopy", project)
 
-        // Set the UI component to the stored states of the manualArrayCopyInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableManualArrayCopyInspectionCheckBox.isSelected =
             manualArrayCopyInspectionTool != null && inspectionProfile.isToolEnabled(manualArrayCopyInspectionTool.displayKey)
 
-        // Add a change listener to enable or disable the manualArrayCopyInspection inspection based on user interaction.
+        // Add a change listener to enable or disable the Manual Array Copy Inspection based on user interactions.
         enableManualArrayCopyInspectionCheckBox.addChangeListener {
             val newState = enableManualArrayCopyInspectionCheckBox.isSelected  // Read the new state.
 
@@ -402,18 +412,20 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // ------------------------------- Setting Panel Formation -------------------------------
 
-        val separator_1 = JSeparator()
-        val separator_2 = JSeparator()
-        val separator_3 = JSeparator()
-        val separator_4 = JSeparator()
+        // Create Swing separator for the control panel of the plugin.
+        val separator1 = JSeparator()
+        val separator2 = JSeparator()
+        val separator3 = JSeparator()
+        val separator4 = JSeparator()
 
+        // Build the control panel of the tool using UI components created before.
         panel = FormBuilder.createFormBuilder()
             .addComponent(importSettingsButton)
-            .addComponent(separator_1)
+            .addComponent(separator1)
             .addComponent(methodLengthInspectionTitleLabel)
             .addComponent(enableMethodLengthInspectionCheckBox)
             .addLabeledComponent("Max Method Length:", maxLengthTextField)
-            .addComponent(separator_2)
+            .addComponent(separator2)
             .addComponent(controlStructInspectionsTitleLabel)
             .addComponent(enableControlStructInspectionsCheckBox)
             .addLabeledComponent("If Statement Usage Specification:", ifStatementUsageTextField)
@@ -422,11 +434,11 @@ class ControlPanel(private val project: Project) : Configurable {
             .addLabeledComponent("For Loop Usage Specification:", forLoopUsageTextField)
             .addLabeledComponent("Enhanced For Loop Usage Specification:", foreachLoopUsageTextField)
             .addComponent(controlStructInspectionsNotesLabel)
-            .addComponent(separator_3)
+            .addComponent(separator3)
             .addComponent(declarationIssueInspectionsTitleLabel)
             .addComponent(enableUnusedInspectionCheckBox)
             .addComponent(enableCanBeFinalInspectionCheckBox)
-            .addComponent(separator_4)
+            .addComponent(separator4)
             .addComponent(javaLanguageLevelInspectionsTitleLabel)
             .addComponent(enableSequencedCollectionMethodCanBeUsedInspectionCheckBox)
             .addComponent(enableForCanBeForeachInspectionCheckBox)
@@ -434,7 +446,7 @@ class ControlPanel(private val project: Project) : Configurable {
             .addComponent(enableManualArrayCopyInspectionCheckBox)
             .panel
 
-        // Add an action listener for input settings file importation.
+        // Add an action listener for the input settings file importation.
         importSettingsButton.addActionListener {
 
             // Open a file choose and allow the user to choose the target JSON file.
@@ -445,7 +457,7 @@ class ControlPanel(private val project: Project) : Configurable {
             // Check if the file read is success.
             if (result == JFileChooser.APPROVE_OPTION) {
 
-                // Find and parse the import file.
+                // Parse the settings in the import file to the control panel.
                 val selectedFile = fileChooser.selectedFile
                 importInputSettingsFile(selectedFile)
             }
@@ -462,11 +474,11 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // --------------------------- Custom Method Length Inspection ---------------------------
 
-        // Get the MethodLengthInspection inspection wrapper from the inspection profile.
+        // Get the Method Length Inspection wrapper from the inspection profile.
         val methodLengthInspectionTool = inspectionProfile.getInspectionTool("MethodLengthInspection", project)
 
-        // Get the MethodLengthInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not MethodLengthInspection.
+        // Get the Method Length Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val methodLengthInspection = methodLengthInspectionTool?.tool as? MethodLengthInspection
 
         // Compare the results between the panel and the inspection profile.
@@ -480,14 +492,14 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // -------------- If Statement Inspection -------------
 
-        // Get the IfStatementInspection inspection wrapper from the inspection profile.
+        // Get the If Statement Inspection wrapper from the inspection profile.
         val ifStatementInspectionTool = inspectionProfile.getInspectionTool("IfStatementUsageInspection", project)
 
-        // Get the IfStatementInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not IfStatementInspection.
+        // Get the If Statement Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val ifStatementInspection = ifStatementInspectionTool?.tool as? IfStatementUsageInspection
 
-        // Set the UI components to the stored states of the control structure inspections.
+        // Compare the results between the panel and the inspection profile.
         val ifStatementChanged =
             ifStatementInspectionTool != null && enableControlStructInspectionsCheckBox.isSelected != inspectionProfile.isToolEnabled(
                 ifStatementInspectionTool.displayKey
@@ -496,15 +508,15 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // -------------- Switch Statement Inspection -------------
 
-        // Get the SwitchStatementInspection inspection wrapper from the inspection profile.
+        // Get the Switch Statement Inspection wrapper from the inspection profile.
         val switchStatementInspectionTool =
             inspectionProfile.getInspectionTool("SwitchStatementUsageInspection", project)
 
-        // Get the SwitchStatementInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not SwitchStatementInspection.
+        // Get the Switch Statement Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val switchStatementInspection = switchStatementInspectionTool?.tool as? SwitchStatementUsageInspection
 
-        // Set the UI components to the stored states of the control structure inspections.
+        // Compare the results between the panel and the inspection profile.
         val switchStatementChanged =
             switchStatementInspectionTool != null && enableControlStructInspectionsCheckBox.isSelected != inspectionProfile.isToolEnabled(
                 switchStatementInspectionTool.displayKey
@@ -513,14 +525,14 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // -------------- While Loop Inspection -------------
 
-        // Get the whileLoopInspection inspection wrapper from the inspection profile.
+        // Get the While Loop Inspection wrapper from the inspection profile.
         val whileLoopInspectionTool = inspectionProfile.getInspectionTool("WhileLoopUsageInspection", project)
 
-        // Get the whileLoopInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not whileLoopInspection.
+        // Get the While Loop Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val whileLoopInspection = whileLoopInspectionTool?.tool as? WhileLoopUsageInspection
 
-        // Set the UI components to the stored states of the control structure inspections.
+        // Compare the results between the panel and the inspection profile.
         val whileLoopChanged =
             whileLoopInspectionTool != null && enableControlStructInspectionsCheckBox.isSelected != inspectionProfile.isToolEnabled(
                 whileLoopInspectionTool.displayKey
@@ -529,14 +541,14 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // -------------- For Loop Inspection -------------
 
-        // Get the forLoopInspection inspection wrapper from the inspection profile.
+        // Get the For Loop Inspection wrapper from the inspection profile.
         val forLoopInspectionTool = inspectionProfile.getInspectionTool("ForLoopUsageInspection", project)
 
-        // Get the forLoopInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not forLoopInspection.
+        // Get the For Loop Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val forLoopInspection = forLoopInspectionTool?.tool as? ForLoopUsageInspection
 
-        // Set the UI components to the stored states of the control structure inspections.
+        // Compare the results between the panel and the inspection profile.
         val forLoopChanged =
             forLoopInspectionTool != null && enableControlStructInspectionsCheckBox.isSelected != inspectionProfile.isToolEnabled(
                 forLoopInspectionTool.displayKey
@@ -545,14 +557,14 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // -------------- Enhanced For Loop Inspection -------------
 
-        // Get the foreachLoopInspection inspection wrapper from the inspection profile.
+        // Get the Enhanced For Loop Inspection wrapper from the inspection profile.
         val foreachLoopInspectionTool = inspectionProfile.getInspectionTool("ForeachLoopUsageInspection", project)
 
-        // Get the foreachLoopInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not foreachLoopInspection.
+        // Get the Enhanced For Loop Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val foreachLoopInspection = foreachLoopInspectionTool?.tool as? ForeachLoopUsageInspection
 
-        // Set the UI components to the stored states of the control structure inspections.
+        // Compare the results between the panel and the inspection profile.
         val foreachLoopChanged =
             foreachLoopInspectionTool != null && enableControlStructInspectionsCheckBox.isSelected != inspectionProfile.isToolEnabled(
                 foreachLoopInspectionTool.displayKey
@@ -561,6 +573,7 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // -------------- Final Code for Control Structures  -------------
 
+        // Summarise the results of comparison between the panel and the inspection profile.
         val controlStructureChanged =
             ifStatementChanged || switchStatementChanged || whileLoopChanged || forLoopChanged || foreachLoopChanged
         val controlStructureSpecsChanged =
@@ -568,47 +581,69 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // --------------------------- Declaration Issue Inspection ---------------------------
 
-        // Get the UnusedInspection inspection wrapper from the inspection profile.
-        val UnusedInspectionTool = inspectionProfile.getInspectionTool("unused", project)
+        // Get the Unused Inspection wrapper from the inspection profile.
+        val unusedInspectionTool = inspectionProfile.getInspectionTool("unused", project)
 
-        // Set the UI component to the stored states of the UnusedInspection inspection.
-        val unusedChanged = UnusedInspectionTool != null && enableUnusedInspectionCheckBox.isSelected != inspectionProfile.isToolEnabled(UnusedInspectionTool.displayKey)
+        // Compare the results between the panel and the inspection profile.
+        val unusedChanged =
+            unusedInspectionTool != null && enableUnusedInspectionCheckBox.isSelected != inspectionProfile.isToolEnabled(
+                unusedInspectionTool.displayKey
+            )
 
-        // Get the CanBeFinalInspection inspection wrapper from the inspection profile.
-        val CanBeFinalInspectionTool = inspectionProfile.getInspectionTool("CanBeFinal", project)
+        // Get the Can Be Final Inspection wrapper from the inspection profile.
+        val canBeFinalInspectionTool = inspectionProfile.getInspectionTool("CanBeFinal", project)
 
-        // Set the UI component to the stored states of the CanBeFinalInspection inspection.
-        val canBeFinalChanged = CanBeFinalInspectionTool != null && enableCanBeFinalInspectionCheckBox.isSelected != inspectionProfile.isToolEnabled(CanBeFinalInspectionTool.displayKey)
+        // Compare the results between the panel and the inspection profile.
+        val canBeFinalChanged =
+            canBeFinalInspectionTool != null && enableCanBeFinalInspectionCheckBox.isSelected != inspectionProfile.isToolEnabled(
+                canBeFinalInspectionTool.displayKey
+            )
 
+        // Summarise the results of comparison between the panel and the inspection profile.
         val declarationIssueChanged = unusedChanged || canBeFinalChanged
 
         // --------------------------- Java Language Level Issue Inspection ---------------------------
 
-        // Get the sequencedCollectionInspection inspection wrapper from the inspection profile.
-        val sequencedCollectionInspectionTool = inspectionProfile.getInspectionTool("SequencedCollectionMethodCanBeUsed", project)
+        // Get the Sequenced Collection Inspection wrapper from the inspection profile.
+        val sequencedCollectionInspectionTool =
+            inspectionProfile.getInspectionTool("SequencedCollectionMethodCanBeUsed", project)
 
-        // Set the UI component to the stored states of the sequencedCollectionInspection inspection.
-        val sequencedCollectionChanged = sequencedCollectionInspectionTool != null && enableSequencedCollectionMethodCanBeUsedInspectionCheckBox.isSelected != inspectionProfile.isToolEnabled(sequencedCollectionInspectionTool.displayKey)
+        // Compare the results between the panel and the inspection profile.
+        val sequencedCollectionChanged =
+            sequencedCollectionInspectionTool != null && enableSequencedCollectionMethodCanBeUsedInspectionCheckBox.isSelected != inspectionProfile.isToolEnabled(
+                sequencedCollectionInspectionTool.displayKey
+            )
 
-        // Get the forCanBeForeachInspection inspection wrapper from the inspection profile.
+        // Get the For Can Be Foreach Inspection wrapper from the inspection profile.
         val forCanBeForeachInspectionTool = inspectionProfile.getInspectionTool("ForCanBeForeach", project)
 
-        // Set the UI component to the stored states of the forCanBeForeachInspection inspection.
-        val forCanBeForeachChanged = forCanBeForeachInspectionTool != null && enableForCanBeForeachInspectionCheckBox.isSelected != inspectionProfile.isToolEnabled(forCanBeForeachInspectionTool.displayKey)
+        // Compare the results between the panel and the inspection profile.
+        val forCanBeForeachChanged =
+            forCanBeForeachInspectionTool != null && enableForCanBeForeachInspectionCheckBox.isSelected != inspectionProfile.isToolEnabled(
+                forCanBeForeachInspectionTool.displayKey
+            )
 
-        // Get the convert2DiamondInspection inspection wrapper from the inspection profile.
+        // Get the Convert 2Diamond Inspection wrapper from the inspection profile.
         val convert2DiamondInspectionTool = inspectionProfile.getInspectionTool("Convert2Diamond", project)
 
-        // Set the UI component to the stored states of the sequencedCollectionInspection inspection.
-        val convert2DiamondChanged = convert2DiamondInspectionTool != null && enableConvert2DiamondInspectionCheckBox.isSelected != inspectionProfile.isToolEnabled(convert2DiamondInspectionTool.displayKey)
+        // Compare the results between the panel and the inspection profile.
+        val convert2DiamondChanged =
+            convert2DiamondInspectionTool != null && enableConvert2DiamondInspectionCheckBox.isSelected != inspectionProfile.isToolEnabled(
+                convert2DiamondInspectionTool.displayKey
+            )
 
-        // Get the manualArrayCopyInspection inspection wrapper from the inspection profile.
+        // Get the Manual Array Copy Inspection wrapper from the inspection profile.
         val manualArrayCopyInspectionTool = inspectionProfile.getInspectionTool("ManualArrayCopy", project)
 
-        // Set the UI component to the stored states of the manualArrayCopyInspection inspection.
-        val manualArrayCopyChanged = manualArrayCopyInspectionTool != null && enableManualArrayCopyInspectionCheckBox.isSelected != inspectionProfile.isToolEnabled(manualArrayCopyInspectionTool.displayKey)
+        // Compare the results between the panel and the inspection profile.
+        val manualArrayCopyChanged =
+            manualArrayCopyInspectionTool != null && enableManualArrayCopyInspectionCheckBox.isSelected != inspectionProfile.isToolEnabled(
+                manualArrayCopyInspectionTool.displayKey
+            )
 
-        val javaLanguageLevelChanged = sequencedCollectionChanged || forCanBeForeachChanged || convert2DiamondChanged || manualArrayCopyChanged
+        // Summarise the results of comparison between the panel and the inspection profile.
+        val javaLanguageLevelChanged =
+            sequencedCollectionChanged || forCanBeForeachChanged || convert2DiamondChanged || manualArrayCopyChanged
 
         // ------------------------------- Return the final result -------------------------------
 
@@ -621,17 +656,17 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // --------------------------- Custom Method Length Inspection ---------------------------
 
-        // Get the MethodLengthInspection inspection wrapper from the inspection profile.
+        // Get the Method Length Inspection wrapper from the inspection profile.
         val methodLengthInspectionTool = inspectionProfile.getInspectionTool("MethodLengthInspection", project)
 
-        // Get the MethodLengthInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not MethodLengthInspection.
+        // Get the Method Length Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val methodLengthInspection = methodLengthInspectionTool?.tool as? MethodLengthInspection
 
-        // If the MethodLengthInspection inspection instance exists.
+        // If the Method Length Inspection instance exists.
         if (methodLengthInspection != null) {
 
-            // Store the settings in the panel to the MethodLengthInspection inspection instance.
+            // Store the settings in the panel to the inspection profile.
             methodLengthInspection.maxLength = maxLengthTextField.text.toIntOrNull() ?: 0
             val newMethodState = enableMethodLengthInspectionCheckBox.isSelected  // Read the new state.
             inspectionProfile.setToolEnabled(methodLengthInspectionTool.shortName, newMethodState)
@@ -639,155 +674,170 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // --------------------------- Custom control structure Inspections ---------------------------
 
-        val newControlStructureState = enableControlStructInspectionsCheckBox.isSelected  // Read the new state.
+        // Read the new state of the Control Structure Inspections.
+        val newControlStructureState = enableControlStructInspectionsCheckBox.isSelected
 
         // -------------- If Statement Inspection -------------
 
-        // Get the IfStatementInspection inspection wrapper from the inspection profile.
+        // Get the If Statement Inspection wrapper from the inspection profile.
         val ifStatementInspectionTool = inspectionProfile.getInspectionTool("IfStatementUsageInspection", project)
 
-        // Get the IfStatementInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not IfStatementInspection.
+        // Get the If Statement Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val ifStatementInspection = ifStatementInspectionTool?.tool as? IfStatementUsageInspection
 
-        // If the IfStatementInspection inspection instance exists.
+        // If the If Statement Inspection instance exists.
         if (ifStatementInspection != null) {
 
-            // Store the settings in the panel to the IfStatementInspection inspection instance.
+            // Store the settings in the panel to the inspection profile.
             ifStatementInspection.specs = ifStatementUsageTextField.text ?: ""
             inspectionProfile.setToolEnabled(ifStatementInspectionTool.shortName, newControlStructureState)
         }
 
         // -------------- Switch Statement Inspection -------------
 
-        // Get the SwitchStatementInspection inspection wrapper from the inspection profile.
+        // Get the Switch Statement Inspection wrapper from the inspection profile.
         val switchStatementInspectionTool =
             inspectionProfile.getInspectionTool("SwitchStatementUsageInspection", project)
 
-        // Get the SwitchStatementInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not switchStatementInspection.
+        // Get the Switch Statement Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val switchStatementInspection = switchStatementInspectionTool?.tool as? SwitchStatementUsageInspection
 
-        // If the switchStatementInspection inspection instance exists.
+        // If the Switch Statement Inspection instance exists.
         if (switchStatementInspection != null) {
 
-            // Store the settings in the panel to the switchStatementInspection inspection instance.
+            // Store the settings in the panel to the inspection profile.
             switchStatementInspection.specs = switchStatementUsageTextField.text ?: ""
             inspectionProfile.setToolEnabled(switchStatementInspectionTool.shortName, newControlStructureState)
         }
 
         // -------------- While Loop Inspection -------------
 
-        // Get the whileLoopInspection inspection wrapper from the inspection profile.
+        // Get the While Loop Inspection wrapper from the inspection profile.
         val whileLoopInspectionTool = inspectionProfile.getInspectionTool("WhileLoopUsageInspection", project)
 
-        // Get the whileLoopInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not whileLoopInspection.
+        // Get the While Loop Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val whileLoopInspection = whileLoopInspectionTool?.tool as? WhileLoopUsageInspection
 
-        // If the whileLoopInspection inspection instance exists.
+        // If the While Loop Inspection instance exists.
         if (whileLoopInspection != null) {
 
-            // Store the settings in the panel to the whileLoopInspection inspection instance.
+            // Store the settings in the panel to the inspection profile.
             whileLoopInspection.specs = whileLoopUsageTextField.text ?: ""
             inspectionProfile.setToolEnabled(whileLoopInspectionTool.shortName, newControlStructureState)
         }
 
         // -------------- For Loop Inspection -------------
 
-        // Get the forLoopInspection inspection wrapper from the inspection profile.
+        // Get the For Loop Inspection wrapper from the inspection profile.
         val forLoopInspectionTool = inspectionProfile.getInspectionTool("ForLoopUsageInspection", project)
 
-        // Get the forLoopInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not forLoopInspection.
+        // Get the For Loop Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val forLoopInspection = forLoopInspectionTool?.tool as? ForLoopUsageInspection
 
-        // If the forLoopInspection inspection instance exists.
+        // If the For Loop Inspection instance exists.
         if (forLoopInspection != null) {
 
-            // Store the settings in the panel to the forLoopInspection inspection instance.
+            // Store the settings in the panel to the inspection profile.
             forLoopInspection.specs = forLoopUsageTextField.text ?: ""
             inspectionProfile.setToolEnabled(forLoopInspectionTool.shortName, newControlStructureState)
         }
 
         // -------------- Enhanced For Loop Inspection -------------
 
-        // Get the foreachLoopInspection inspection wrapper from the inspection profile.
+        // Get the Foreach Loop Inspection wrapper from the inspection profile.
         val foreachLoopInspectionTool = inspectionProfile.getInspectionTool("ForeachLoopUsageInspection", project)
 
-        // Get the foreachLoopInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not foreachLoopInspection.
+        // Get the Foreach Loop Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val foreachLoopInspection = foreachLoopInspectionTool?.tool as? ForeachLoopUsageInspection
 
-        // If the foreachLoopInspection inspection instance exists.
+        // If the Foreach Loop Inspection instance exists.
         if (foreachLoopInspection != null) {
 
-            // Store the settings in the panel to the foreachLoopInspection inspection instance.
+            // Store the settings in the panel to the inspection profile.
             foreachLoopInspection.specs = foreachLoopUsageTextField.text ?: ""
             inspectionProfile.setToolEnabled(foreachLoopInspectionTool.shortName, newControlStructureState)
         }
 
         // --------------------------- Declaration Issue Inspection ---------------------------
 
-        // Get the UnusedInspection inspection wrapper from the inspection profile.
-        val UnusedInspectionTool = inspectionProfile.getInspectionTool("unused", project)
+        // Get the Unused Inspection wrapper from the inspection profile.
+        val unusedInspectionTool = inspectionProfile.getInspectionTool("unused", project)
 
-        // If the UnusedInspection inspection instance exists.
-        if (UnusedInspectionTool != null) {
+        // If the Unused Inspection instance exists.
+        if (unusedInspectionTool != null) {
+
+            // Store the settings in the panel to the inspection profile.
             val newMethodState = enableUnusedInspectionCheckBox.isSelected  // Read the new state.
-            inspectionProfile.setToolEnabled(UnusedInspectionTool.shortName, newMethodState)
+            inspectionProfile.setToolEnabled(unusedInspectionTool.shortName, newMethodState)
         }
 
-        // Get the CanBeFinalInspection inspection wrapper from the inspection profile.
-        val CanBeFinalInspectionTool = inspectionProfile.getInspectionTool("CanBeFinal", project)
+        // Get the Can Be Final Inspection wrapper from the inspection profile.
+        val canBeFinalInspectionTool = inspectionProfile.getInspectionTool("CanBeFinal", project)
 
-        // If the CanBeFinalInspection inspection instance exists.
-        if (CanBeFinalInspectionTool != null) {
+        // If the Can Be Final Inspection instance exists.
+        if (canBeFinalInspectionTool != null) {
+
+            // Store the settings in the panel to the inspection profile.
             val newMethodState = enableCanBeFinalInspectionCheckBox.isSelected  // Read the new state.
-            inspectionProfile.setToolEnabled(CanBeFinalInspectionTool.shortName, newMethodState)
+            inspectionProfile.setToolEnabled(canBeFinalInspectionTool.shortName, newMethodState)
         }
 
         // --------------------------- Java Language Level Issue Inspection ---------------------------
 
-        // Get the sequencedCollectionInspection inspection wrapper from the inspection profile.
-        val sequencedCollectionInspectionTool = inspectionProfile.getInspectionTool("SequencedCollectionMethodCanBeUsed", project)
+        // Get the Sequenced Collection Inspection wrapper from the inspection profile.
+        val sequencedCollectionInspectionTool =
+            inspectionProfile.getInspectionTool("SequencedCollectionMethodCanBeUsed", project)
 
-        // If the sequencedCollectionInspection inspection instance exists.
+        // If the Sequenced Collection Inspection instance exists.
         if (sequencedCollectionInspectionTool != null) {
-            val newMethodState = enableSequencedCollectionMethodCanBeUsedInspectionCheckBox.isSelected  // Read the new state.
+
+            // Store the settings in the panel to the inspection profile.
+            val newMethodState =
+                enableSequencedCollectionMethodCanBeUsedInspectionCheckBox.isSelected  // Read the new state.
             inspectionProfile.setToolEnabled(sequencedCollectionInspectionTool.shortName, newMethodState)
         }
 
-        // Get the forCanBeForeachInspection inspection wrapper from the inspection profile.
+        // Get the For Can Be Foreach Inspection wrapper from the inspection profile.
         val forCanBeForeachInspectionTool = inspectionProfile.getInspectionTool("ForCanBeForeach", project)
 
-        // If the forCanBeForeachInspection inspection instance exists.
+        // If the For Can Be Foreach Inspection instance exists.
         if (forCanBeForeachInspectionTool != null) {
+
+            // Store the settings in the panel to the inspection profile.
             val newMethodState = enableForCanBeForeachInspectionCheckBox.isSelected  // Read the new state.
             inspectionProfile.setToolEnabled(forCanBeForeachInspectionTool.shortName, newMethodState)
         }
 
-        // Get the convert2DiamondInspection inspection wrapper from the inspection profile.
+        // Get the Convert 2Diamond Inspection wrapper from the inspection profile.
         val convert2DiamondInspectionTool = inspectionProfile.getInspectionTool("Convert2Diamond", project)
 
-        // If the convert2DiamondInspection inspection instance exists.
+        // If the Convert 2Diamond Inspection instance exists.
         if (convert2DiamondInspectionTool != null) {
+
+            // Store the settings in the panel to the inspection profile.
             val newMethodState = enableConvert2DiamondInspectionCheckBox.isSelected  // Read the new state.
             inspectionProfile.setToolEnabled(convert2DiamondInspectionTool.shortName, newMethodState)
         }
 
-        // Get the manualArrayCopyInspection inspection wrapper from the inspection profile.
+        // Get the Manual Array Copy Inspection wrapper from the inspection profile.
         val manualArrayCopyInspectionTool = inspectionProfile.getInspectionTool("ManualArrayCopy", project)
 
-        // If the manualArrayCopyInspection inspection instance exists.
+        // If the Manual Array Copy Inspection instance exists.
         if (manualArrayCopyInspectionTool != null) {
+
+            // Store the settings in the panel to the inspection profile.
             val newMethodState = enableManualArrayCopyInspectionCheckBox.isSelected  // Read the new state.
             inspectionProfile.setToolEnabled(manualArrayCopyInspectionTool.shortName, newMethodState)
         }
 
         // --------------------------- Final Code ---------------------------
 
-        // Commit the changes to the inspection profile
+        // Commit the changes to the inspection profile.
         inspectionProfile.modifyProfile {
             it.commit()
         }
@@ -799,14 +849,14 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // --------------------------- Custom Method Length Inspection ---------------------------
 
-        // Get the MethodLengthInspection inspection wrapper from the inspection profile.
+        // Get the Method Length Inspection wrapper from the inspection profile.
         val methodLengthInspectionTool = inspectionProfile.getInspectionTool("MethodLengthInspection", project)
 
-        // Get the MethodLengthInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not MethodLengthInspection.
+        // Get the Method Length Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val methodLengthInspection = methodLengthInspectionTool?.tool as? MethodLengthInspection
 
-        // Reset the settings of the MethodLengthInspection inspection using the inspection profile
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableMethodLengthInspectionCheckBox.isSelected =
             methodLengthInspectionTool != null && inspectionProfile.isToolEnabled(methodLengthInspectionTool.displayKey)
         maxLengthTextField.text = methodLengthInspection?.maxLength?.toString() ?: "10"
@@ -815,83 +865,82 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // -------------- If Statement Inspection -------------
 
-        // Get the IfStatementInspection inspection wrapper from the inspection profile.
+        // Get the If Statement Inspection wrapper from the inspection profile.
         val ifStatementInspectionTool = inspectionProfile.getInspectionTool("IfStatementUsageInspection", project)
 
-        // Get the IfStatementInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not ifStatementInspection.
+        // Get the If Statement Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val ifStatementInspection = ifStatementInspectionTool?.tool as? IfStatementUsageInspection
 
-        // Set the UI components to the stored states of the control structure inspections.
+        // Set the value of the UI components to the stored states in the inspection profile.
         val ifStatementState =
             ifStatementInspectionTool != null && inspectionProfile.isToolEnabled(ifStatementInspectionTool.displayKey)
         ifStatementUsageTextField.text = ifStatementInspection?.specs ?: ""
 
         // -------------- Switch Statement Inspection -------------
 
-        // Get the SwitchStatementInspection inspection wrapper from the inspection profile.
+        // Get the Switch Statement Inspection wrapper from the inspection profile.
         val switchStatementInspectionTool =
             inspectionProfile.getInspectionTool("SwitchStatementUsageInspection", project)
 
-        // Get the SwitchStatementInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not switchStatementInspection.
+        // Get the Switch Statement Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val switchStatementInspection = switchStatementInspectionTool?.tool as? SwitchStatementUsageInspection
 
-        // Set the UI components to the stored states of the control structure inspections.
+        // Set the value of the UI components to the stored states in the inspection profile.
         val switchStatementState =
             switchStatementInspectionTool != null && inspectionProfile.isToolEnabled(switchStatementInspectionTool.displayKey)
         switchStatementUsageTextField.text = switchStatementInspection?.specs ?: ""
 
         // -------------- While Loop Inspection -------------
 
-        // Get the whileLoopInspection inspection wrapper from the inspection profile.
+        // Get the While Loop Inspection wrapper from the inspection profile.
         val whileLoopInspectionTool = inspectionProfile.getInspectionTool("WhileLoopUsageInspection", project)
 
-        // Get the whileLoopInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not whileLoopInspection.
+        // Get the While Loop Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val whileLoopInspection = whileLoopInspectionTool?.tool as? WhileLoopUsageInspection
 
-        // Set the UI components to the stored states of the whileLoopInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         val whileLoopState =
             whileLoopInspectionTool != null && inspectionProfile.isToolEnabled(whileLoopInspectionTool.displayKey)
         whileLoopUsageTextField.text = whileLoopInspection?.specs ?: ""
 
         // -------------- For Loop Inspection -------------
 
-        // Get the forLoopInspection inspection wrapper from the inspection profile.
+        // Get the For Loop Inspection wrapper from the inspection profile.
         val forLoopInspectionTool = inspectionProfile.getInspectionTool("ForLoopUsageInspection", project)
 
-        // Get the forLoopInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not forLoopInspection.
+        // Get the For Loop Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val forLoopInspection = forLoopInspectionTool?.tool as? ForLoopUsageInspection
 
-        // Set the UI components to the stored states of the forLoopInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         val forLoopState =
             forLoopInspectionTool != null && inspectionProfile.isToolEnabled(forLoopInspectionTool.displayKey)
         forLoopUsageTextField.text = forLoopInspection?.specs ?: ""
 
         // -------------- Enhanced For Loop Inspection -------------
 
-        // Get the forLoopInspection inspection wrapper from the inspection profile.
+        // Get the Enhanced For Loop Inspection wrapper from the inspection profile.
         val foreachLoopInspectionTool = inspectionProfile.getInspectionTool("ForeachLoopUsageInspection", project)
 
-        // Get the foreachLoopInspection inspection instance from the wrapper.
-        // Null if the wrapper does not exist or the type of the inspection instance is not foreachLoopInspection.
+        // Get the Enhanced For Loop Inspection instance from the wrapper.
+        // Null if the wrapper does not exist or the type of the inspection instance is not correct.
         val foreachLoopInspection = foreachLoopInspectionTool?.tool as? ForeachLoopUsageInspection
 
-        // Set the UI components to the stored states of the foreachLoopInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         val foreachLoopState =
             foreachLoopInspectionTool != null && inspectionProfile.isToolEnabled(foreachLoopInspectionTool.displayKey)
         foreachLoopUsageTextField.text = foreachLoopInspection?.specs ?: ""
 
         // -------------- Final Code for Control Structures  -------------
 
-        // Check all the control structure inspections have the same state.
+        // Check all the Control Structure Inspections have the same state.
         if (ifStatementState == switchStatementState == whileLoopState == forLoopState == foreachLoopState) {
             enableControlStructInspectionsCheckBox.isSelected = ifStatementState
         } else {
-
-            // Set all the control structure inspections to false
+            // Set all the Control Structure Inspections to false if the status are not consistent.
             enableControlStructInspectionsCheckBox.isSelected = false
             if (ifStatementInspectionTool != null) {
                 inspectionProfile.setToolEnabled(ifStatementInspectionTool.shortName, false)
@@ -909,7 +958,7 @@ class ControlPanel(private val project: Project) : Configurable {
                 inspectionProfile.setToolEnabled(foreachLoopInspectionTool.shortName, false)
             }
 
-            // Commit the changes to the inspection profile
+            // Commit the changes to the inspection profile.
             inspectionProfile.modifyProfile {
                 it.commit()
             }
@@ -917,59 +966,65 @@ class ControlPanel(private val project: Project) : Configurable {
 
         // --------------------------- Declaration Issue Inspection ---------------------------
 
-        // Get the UnusedInspection inspection wrapper from the inspection profile.
-        val UnusedInspectionTool = inspectionProfile.getInspectionTool("unused", project)
+        // Get the Unused Inspection wrapper from the inspection profile.
+        val unusedInspectionTool = inspectionProfile.getInspectionTool("unused", project)
 
-        // Set the UI component to the stored states of the UnusedInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableUnusedInspectionCheckBox.isSelected =
-            UnusedInspectionTool != null && inspectionProfile.isToolEnabled(UnusedInspectionTool.displayKey)
+            unusedInspectionTool != null && inspectionProfile.isToolEnabled(unusedInspectionTool.displayKey)
 
-        // Get the CanBeFinalInspection inspection wrapper from the inspection profile.
-        val CanBeFinalInspectionTool = inspectionProfile.getInspectionTool("CanBeFinal", project)
+        // Get the Can Be Final Inspection wrapper from the inspection profile.
+        val canBeFinalInspectionTool = inspectionProfile.getInspectionTool("CanBeFinal", project)
 
-        // Set the UI component to the stored states of the CanBeFinalInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableCanBeFinalInspectionCheckBox.isSelected =
-            CanBeFinalInspectionTool != null && inspectionProfile.isToolEnabled(CanBeFinalInspectionTool.displayKey)
+            canBeFinalInspectionTool != null && inspectionProfile.isToolEnabled(canBeFinalInspectionTool.displayKey)
 
         // --------------------------- Java Language Level Issue Inspection ---------------------------
 
-        // Get the sequencedCollectionInspection inspection wrapper from the inspection profile.
-        val sequencedCollectionInspectionTool = inspectionProfile.getInspectionTool("SequencedCollectionMethodCanBeUsed", project)
+        // Get the sequenced Collection Inspection wrapper from the inspection profile.
+        val sequencedCollectionInspectionTool =
+            inspectionProfile.getInspectionTool("SequencedCollectionMethodCanBeUsed", project)
 
-        // Set the UI component to the stored states of the sequencedCollectionInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableSequencedCollectionMethodCanBeUsedInspectionCheckBox.isSelected =
-            sequencedCollectionInspectionTool != null && inspectionProfile.isToolEnabled(sequencedCollectionInspectionTool.displayKey)
+            sequencedCollectionInspectionTool != null && inspectionProfile.isToolEnabled(
+                sequencedCollectionInspectionTool.displayKey
+            )
 
-        // Get the ForCanBeForeach inspection wrapper from the inspection profile.
+        // Get the For Can Be Foreach Inspection wrapper from the inspection profile.
         val forCanBeForeachInspectionTool = inspectionProfile.getInspectionTool("ForCanBeForeach", project)
 
-        // Set the UI component to the stored states of the forCanBeForeachInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableForCanBeForeachInspectionCheckBox.isSelected =
             forCanBeForeachInspectionTool != null && inspectionProfile.isToolEnabled(forCanBeForeachInspectionTool.displayKey)
 
-        // Get the Convert2Diamond inspection wrapper from the inspection profile.
+        // Get the Convert 2Diamond Inspection wrapper from the inspection profile.
         val convert2DiamondInspectionTool = inspectionProfile.getInspectionTool("Convert2Diamond", project)
 
-        // Set the UI component to the stored states of the convert2DiamondInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableConvert2DiamondInspectionCheckBox.isSelected =
             convert2DiamondInspectionTool != null && inspectionProfile.isToolEnabled(convert2DiamondInspectionTool.displayKey)
 
-        // Get the ManualArrayCopy inspection wrapper from the inspection profile.
+        // Get the Manual Array Copy Inspection wrapper from the inspection profile.
         val manualArrayCopyInspectionTool = inspectionProfile.getInspectionTool("ManualArrayCopy", project)
 
-        // Set the UI component to the stored states of the manualArrayCopyInspection inspection.
+        // Set the value of the UI components to the stored states in the inspection profile.
         enableManualArrayCopyInspectionCheckBox.isSelected =
             manualArrayCopyInspectionTool != null && inspectionProfile.isToolEnabled(manualArrayCopyInspectionTool.displayKey)
     }
 
     override fun getDisplayName(): String {
-        return "EasyCode Linter Panel"
+        return "EasyCode Linter Panel"  // Name of the control panel.
     }
 
-    // A helper function to handle the importatin of input settings file.
+    // One helper function to handle the importation of the input settings file.
     private fun importInputSettingsFile(file: File) {
-        try {
 
+        // Declare a variable to store the inspection name
+        var inspectionName = ""
+
+        try {
             // Create a FileReader to read from the input file
             FileReader(file).use { reader ->
 
@@ -977,12 +1032,14 @@ class ControlPanel(private val project: Project) : Configurable {
                 val json = Gson().fromJson(reader, JsonObject::class.java)
 
                 // Parsing "MethodLengthInspection" settings
+                inspectionName = "MethodLengthInspection"
                 json.getAsJsonObject("MethodLengthInspection")?.let { methodLengthJson ->
                     enableMethodLengthInspectionCheckBox.isSelected = methodLengthJson.get("status").asBoolean
                     maxLengthTextField.text = methodLengthJson.get("maxLength").asString
                 }
 
                 // Parse "ControlStructuresInspection" settings
+                inspectionName = "ControlStructuresInspection"
                 json.getAsJsonObject("ControlStructuresInspection")?.let { controlStructuresJson ->
                     enableControlStructInspectionsCheckBox.isSelected = controlStructuresJson.get("status").asBoolean
                     ifStatementUsageTextField.text = controlStructuresJson.get("IfStatementSpecs").asString
@@ -993,40 +1050,50 @@ class ControlPanel(private val project: Project) : Configurable {
                 }
 
                 // Parse "CanBeFinalInspection" settings
+                inspectionName = "CanBeFinalInspection"
                 json.getAsJsonObject("CanBeFinalInspection")?.let { canBeFinalJson ->
                     enableCanBeFinalInspectionCheckBox.isSelected = canBeFinalJson.get("status").asBoolean
                 }
 
                 // Parse "UnusedInspection" settings
+                inspectionName = "UnusedInspection"
                 json.getAsJsonObject("UnusedInspection")?.let { unusedJson ->
                     enableUnusedInspectionCheckBox.isSelected = unusedJson.get("status").asBoolean
                 }
 
                 // Parse "SequencedCollectionMethodCanBeUsedInspection" settings
+                inspectionName = "SequencedCollectionMethodCanBeUsedInspection"
                 json.getAsJsonObject("SequencedCollectionMethodCanBeUsedInspection")?.let { sequencedCollectionJson ->
-                    enableSequencedCollectionMethodCanBeUsedInspectionCheckBox.isSelected = sequencedCollectionJson.get("status").asBoolean
+                    enableSequencedCollectionMethodCanBeUsedInspectionCheckBox.isSelected =
+                        sequencedCollectionJson.get("status").asBoolean
                 }
 
                 // Parse "ForCanBeForeachInspection" settings
+                inspectionName = "ForCanBeForeachInspection"
                 json.getAsJsonObject("ForCanBeForeachInspection")?.let { forCanBeForeachJson ->
                     enableForCanBeForeachInspectionCheckBox.isSelected = forCanBeForeachJson.get("status").asBoolean
                 }
 
                 // Parse "Convert2DiamondInspection" settings
+                inspectionName = "Convert2DiamondInspection"
                 json.getAsJsonObject("Convert2DiamondInspection")?.let { convert2DiamondJson ->
                     enableConvert2DiamondInspectionCheckBox.isSelected = convert2DiamondJson.get("status").asBoolean
                 }
 
                 // Parse "ManualArrayCopyInspection" settings
+                inspectionName = "ManualArrayCopyInspection"
                 json.getAsJsonObject("ManualArrayCopyInspection")?.let { manualArrayCopyJson ->
                     enableManualArrayCopyInspectionCheckBox.isSelected = manualArrayCopyJson.get("status").asBoolean
                 }
             }
-
         } catch (e: Exception) {
-
             // Show an error message when the format of the input settings file is not correct.
-            JOptionPane.showMessageDialog(panel, "Error reading settings file: " + e.message, "Import Error", JOptionPane.ERROR_MESSAGE)
+            JOptionPane.showMessageDialog(
+                panel,
+                "Error reading in ${inspectionName} object!",
+                "Import Error",
+                JOptionPane.ERROR_MESSAGE
+            )
         }
     }
 
